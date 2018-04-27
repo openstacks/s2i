@@ -34,6 +34,7 @@ fi
 echo /go/src/$PACKAGE_NAME
 cp -Rf /tmp/src/. /go/src/$PACKAGE_NAME
 
+echo "---> This is a demo for s2i..."
 echo "---> Building application from source..."
 # TODO: Add build steps for your application, eg npm install, bundle install, pip install, etc.
 pushd /go/src/$PACKAGE_NAME
