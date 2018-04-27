@@ -1,3 +1,23 @@
-#!/bin/bash
-set -e
-exec /opt/app-root/gobinary
+#!/bin/bash -e
+#
+# S2I run script for the 'golang-builder' image.
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+export PACKAGE_NAME=""
+if [ "$OPENSHIFT_BUILD_SOURCE" != "" ]; then
+	PACKAGE_NAME=$(echo ${OPENSHIFT_BUILD_SOURCE##*/}  |awk -F'[. ]' '{print $1}')
+else 
+	PACKAGE_NAME=$PROJECT_NAME
+fi
+
+if [ "$PACKAGE_NAME" == "" ]; then
+	echo "builder need an enviroment variable,PROJECT_NAME for biuld!!"
+fi
+
+pushd /go/src/$PACKAGE_NAME
+./go-publish-service
+popd
