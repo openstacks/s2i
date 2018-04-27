@@ -2,7 +2,7 @@
 
 set -e
 
-pushd /tmp/src
+#pushd /tmp/src
 if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
     INSTALL_URL=${INSTALL_URL:-$IMPORT_URL}
     if [[ ! -z "$IMPORT_URL" ]]; then
@@ -34,12 +34,12 @@ if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
     fi
     exec /$STI_SCRIPTS_PATH/usage
 else
-   #echo /go/src/$PACKAGE_NAME
-   #cp -Rf /tmp/src/. /go/src/$PACKAGE_NAME
+   echo /go/src/s2i
+   cp -Rf /tmp/src/. /go/src/s2i
 
    echo "---> Building application from source..."
 
-   #pushd /go/src/$PACKAGE_NAME
-   go build -v -o /go/src/go-publish-service
+   pushd /go/src/s2i
+   go build -v -o /go/src/s2i/go
    popd
 fi
