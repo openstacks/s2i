@@ -34,12 +34,9 @@ if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
     fi
     exec /$STI_SCRIPTS_PATH/usage
 else
-   echo /go/src/s2i
-   cp -Rf /tmp/src/. /go/src/s2i
 
    echo "---> Building application from source..."
 
-   pushd /tmp/src
-   go build -v -o /go/src/s2i/go
+    go build -v -o /home
    popd
 fi
