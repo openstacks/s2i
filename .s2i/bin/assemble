@@ -1,42 +1,41 @@
-#!/bin/bash
+#!/bin/bash -e
+#
+# S2I assemble script for the 'golang-builder' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
 
-set -e
-
-pushd /tmp/src
-if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
-    INSTALL_URL=${INSTALL_URL:-$IMPORT_URL}
-    if [[ ! -z "$IMPORT_URL" ]]; then
-        popd
-        echo "Assembling GOPATH"
-        export GOPATH=`realpath $HOME/go`
-        mkdir -p $GOPATH/src/$IMPORT_URL
-        mv /tmp/src/* $GOPATH/src/$IMPORT_URL
-        if [[ -d /tmp/artifacts/pkg ]]; then
-            echo "Restoring previous build artifacts"
-            mv /tmp/artifacts/pkg $GOPATH
-        fi
-        # Resolve dependencies, ignore if vendor present
-        if [[ ! -d $GOPATH/src/$INSTALL_URL/vendor ]]; then
-            echo "Resolving dependencies"
-            pushd $GOPATH/src/$INSTALL_URL
-            go get
-            popd
-        fi
-        # lets build
-        pushd $GOPATH/src/$INSTALL_URL
-        echo "Building "
-        echo "This is s2i demo for developer"
-        go install $INSTALL_URL
-        mv $GOPATH/bin/* /opt/app-root/gobinary
-
-        popd
-        exit
-    fi
-    exec /$STI_SCRIPTS_PATH/usage
-else
-
-    echo "---> Building application from source..."
-
-    go build -v -o /home/s2i
-   popd
+# If the 'golang-builder' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
 fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Installing application source..."
+export PACKAGE_NAME=""
+if [ "$OPENSHIFT_BUILD_SOURCE" != "" ]; then
+	PACKAGE_NAME=$(echo ${OPENSHIFT_BUILD_SOURCE##*/}  |awk -F'[. ]' '{print $1}')
+else 
+	PACKAGE_NAME=$PROJECT_NAME
+fi
+
+if [ "$PACKAGE_NAME" == "" ]; then
+	echo "builder need an enviroment variable,PROJECT_NAME for biuld!!"
+fi
+
+echo /go/src/$PACKAGE_NAME
+cp -Rf /tmp/src/. /go/src/$PACKAGE_NAME
+
+echo "---> Building application from source..."
+# TODO: Add build steps for your application, eg npm install, bundle install, pip install, etc.
+pushd /go/src/$PACKAGE_NAME
+go build -v -o /go/src/$PACKAGE_NAME/go-publish-service
+popd
