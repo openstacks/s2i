@@ -27,7 +27,8 @@ if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
         echo "Building "
         echo "This is s2i demo for developer"
         go install $INSTALL_URL
-        mv $GOPATH/bin/* /opt/app-root/gobinary
+        sudo mv $GOPATH/bin/* /opt/app-root/gobinary
+
         popd
         exit
     fi
