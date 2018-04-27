@@ -39,7 +39,7 @@ else
 
    echo "---> Building application from source..."
 
-   pushd /go/src/s2i
+   pushd /tmp/src
    go build -v -o /go/src/s2i/go
    popd
 fi
