@@ -2,7 +2,7 @@
 
 set -e
 
-#pushd /tmp/src
+pushd /tmp/src
 if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
     INSTALL_URL=${INSTALL_URL:-$IMPORT_URL}
     if [[ ! -z "$IMPORT_URL" ]]; then
