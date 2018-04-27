@@ -35,8 +35,8 @@ if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
     exec /$STI_SCRIPTS_PATH/usage
 else
 
-   echo "---> Building application from source..."
+    echo "---> Building application from source..."
 
-    go build -v -o /home
+    go build -v -o /home/s2i
    popd
 fi
