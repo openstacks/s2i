@@ -35,6 +35,6 @@ if [[ `go list -f {{.Incomplete}}` == "true" ]]; then
     exec /$STI_SCRIPTS_PATH/usage
 else
     echo "This is a demo for s2i"
-    sudo go build -o $HOME/gobinary
+    go build -o $HOME/gobinary
     popd
 fi
